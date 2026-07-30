@@ -18,6 +18,21 @@ theme = 'ananke'
   skills = ['LLM 应用', 'RAG', 'Agent', 'Python', '后端开发', '前端开发', '部署上线']
 
 [[menu.main]]
+  name = '首页'
+  url = '/'
+  weight = 1
+
+[[menu.main]]
   name = '项目'
   url = '/projects/'
   weight = 2
+
+[[menu.main]]
+  name = '关于'
+  url = '/about/'
+  weight = 3
+
+[[menu.main]]
+  name = '联系'
+  url = '/#contact'
+  weight = 4

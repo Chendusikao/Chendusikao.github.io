@@ -23,7 +23,8 @@ $checks = @{
   'index.html' = @(
     "AI $(ConvertFrom-CodePoints 0x5E94, 0x7528, 0x5F00, 0x53D1, 0x5DE5, 0x7A0B, 0x5E08)",
     (ConvertFrom-CodePoints 0x7CBE, 0x9009, 0x9879, 0x76EE),
-    'GitHub'
+    "A $([char]0x80A1) K $([char]0x7EBF) $(ConvertFrom-CodePoints 0x7EC8, 0x7AEF)",
+    'github.com/Chendusikao/a-share-kline-terminal'
   )
   'projects/index.html' = @(
     (ConvertFrom-CodePoints 0x9879, 0x76EE),

@@ -1,0 +1,25 @@
+<article class="card">
+  {{ with .Params.status }}
+    <p><span class="chip">{{ . }}</span></p>
+  {{ end }}
+  <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+  {{ with .Params.summary }}
+    <p>{{ . }}</p>
+  {{ end }}
+  {{ with .Params.stack }}
+    <ul class="chip-list" aria-label="技术栈">
+      {{ range . }}
+        <li class="chip">{{ . }}</li>
+      {{ end }}
+    </ul>
+  {{ end }}
+  <p>
+    <a href="{{ .RelPermalink }}">查看项目</a>
+    {{ with .Params.demo }}
+      <a href="{{ . }}" rel="noreferrer" target="_blank">演示</a>
+    {{ end }}
+    {{ with .Params.github }}
+      <a href="{{ . }}" rel="noreferrer" target="_blank">GitHub</a>
+    {{ end }}
+  </p>
+</article>

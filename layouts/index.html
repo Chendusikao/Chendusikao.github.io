@@ -1,0 +1,88 @@
+{{ define "main" }}
+  {{ $projects := where site.RegularPages "Section" "projects" }}
+  {{ $featured := where $projects "Params.featured" true }}
+  {{ $cards := first 4 (cond (gt (len $featured) 0) $featured $projects) }}
+
+  <section class="section" aria-labelledby="intro-title">
+    <div class="container">
+      <p class="eyebrow">{{ site.Params.profile.name }}</p>
+      <h1 id="intro-title">{{ site.Params.profile.role }}</h1>
+      <p class="lead">{{ site.Params.profile.summary }}</p>
+      <p>
+        <a class="button" href="#projects">查看精选项目</a>
+        <a class="button button--secondary" href="#contact">联系我</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="skills-title">
+    <div class="container">
+      <p class="eyebrow">技术范围</p>
+      <h2 id="skills-title" class="section-title">面向 AI 应用交付的能力</h2>
+      <ul class="chip-list" aria-label="技能">
+        {{ range site.Params.skills }}
+          <li class="chip">{{ . }}</li>
+        {{ end }}
+      </ul>
+    </div>
+  </section>
+
+  <section id="projects" class="section" aria-labelledby="projects-title">
+    <div class="container">
+      <p class="eyebrow">项目作品</p>
+      <h2 id="projects-title" class="section-title">精选项目</h2>
+      {{ with $cards }}
+        <div class="grid">
+          {{ range . }}
+            {{ partial "project-card.html" . }}
+          {{ end }}
+        </div>
+      {{ else }}
+        <p class="lead">项目内容正在整理中。</p>
+      {{ end }}
+      <p><a class="button button--secondary" href="{{ "/projects/" | relURL }}">查看全部项目</a></p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="delivery-title">
+    <div class="container">
+      <p class="eyebrow">交付方式</p>
+      <h2 id="delivery-title" class="section-title">从想法到可用产品</h2>
+      <ol class="grid">
+        <li class="card">
+          <h3>需求梳理</h3>
+          <p>明确目标、范围和可验证的交付内容。</p>
+        </li>
+        <li class="card">
+          <h3>AI 能力接入</h3>
+          <p>围绕实际场景选择并整合合适的 AI 能力。</p>
+        </li>
+        <li class="card">
+          <h3>全栈实现</h3>
+          <p>完成前后端协作所需的界面与服务实现。</p>
+        </li>
+        <li class="card">
+          <h3>部署上线</h3>
+          <p>将可用版本部署上线，方便后续持续完善。</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="contact" class="section" aria-labelledby="contact-title">
+    <div class="container">
+      <p class="eyebrow">联系</p>
+      <h2 id="contact-title" class="section-title">有合适的 AI 应用项目？</h2>
+      <p class="lead">欢迎通过 GitHub 了解正在开发和持续完善的项目。</p>
+      <p>
+        <a class="button" href="{{ site.Params.contact.github }}" rel="noreferrer" target="_blank">GitHub</a>
+        {{ with site.Params.contact.email }}
+          <a class="button button--secondary" href="mailto:{{ . }}">邮箱联系</a>
+        {{ end }}
+        {{ with site.Params.contact.resume }}
+          <a class="button button--secondary" href="{{ . }}">查看简历</a>
+        {{ end }}
+      </p>
+    </div>
+  </section>
+{{ end }}
