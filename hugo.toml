@@ -1,0 +1,4 @@
+baseURL = 'https://chendusikao.github.io/'
+locale = 'en-us'
+title = '琛度思考'
+theme = 'ananke'
