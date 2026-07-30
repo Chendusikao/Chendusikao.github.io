@@ -12,6 +12,9 @@ function ConvertFrom-CodePoints {
 Push-Location $root
 try {
   & (Get-Command hugo -ErrorAction Stop).Source --gc --minify --destination $output
+  if ($LASTEXITCODE -ne 0) {
+    throw "Hugo build failed with exit code $LASTEXITCODE"
+  }
 } finally {
   Pop-Location
 }
