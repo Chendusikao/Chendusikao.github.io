@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
-$output = Join-Path $env:TEMP 'chendusikao-portfolio-smoke'
+$output = Join-Path ([System.IO.Path]::GetTempPath()) 'chendusikao-portfolio-smoke'
 Remove-Item -Recurse -Force $output -ErrorAction SilentlyContinue
 
 function ConvertFrom-CodePoints {
@@ -9,15 +9,32 @@ function ConvertFrom-CodePoints {
   -join ($CodePoints | ForEach-Object { [char]$_ })
 }
 
-Push-Location $root
 try {
-  & (Get-Command hugo -ErrorAction Stop).Source --gc --minify --destination $output
-  if ($LASTEXITCODE -ne 0) {
-    throw "Hugo build failed with exit code $LASTEXITCODE"
+  $config = Get-Content -Raw -Encoding utf8 (Join-Path $root 'hugo.toml')
+  if ($config -notmatch "(?m)^locale = 'zh-CN'$") {
+    throw "hugo.toml must declare locale = 'zh-CN'"
   }
-} finally {
-  Pop-Location
-}
+  if ($config -match '(?m)^languageCode\s*=') {
+    throw 'hugo.toml must not use the deprecated languageCode setting'
+  }
+
+  $workflow = Get-Content -Raw -Encoding utf8 (Join-Path $root '.github/workflows/hugo.yaml')
+  $buildIndex = $workflow.IndexOf('Build site')
+  $smokeIndex = $workflow.IndexOf('tests/portfolio-smoke.ps1')
+  $uploadIndex = $workflow.IndexOf('Upload Pages artifact')
+  if ($buildIndex -lt 0 -or $smokeIndex -lt 0 -or $uploadIndex -lt 0 -or $buildIndex -gt $smokeIndex -or $smokeIndex -gt $uploadIndex) {
+    throw 'The Pages workflow must run the portfolio smoke test after building and before uploading the artifact'
+  }
+
+  Push-Location $root
+  try {
+    & (Get-Command hugo -ErrorAction Stop).Source --gc --minify --destination $output
+    if ($LASTEXITCODE -ne 0) {
+      throw "Hugo build failed with exit code $LASTEXITCODE"
+    }
+  } finally {
+    Pop-Location
+  }
 
 $checks = @{
   'index.html' = @(
@@ -40,14 +57,53 @@ $checks = @{
   )
 }
 
-foreach ($relativePath in $checks.Keys) {
-  $html = Get-Content -Raw -Encoding utf8 (Join-Path $output $relativePath)
-  foreach ($expected in $checks[$relativePath]) {
-    if ($html -notmatch [regex]::Escape($expected)) {
-      throw "Missing '$expected' in $relativePath"
+  foreach ($relativePath in $checks.Keys) {
+    $html = Get-Content -Raw -Encoding utf8 (Join-Path $output $relativePath)
+    foreach ($expected in $checks[$relativePath]) {
+      if ($html -notmatch [regex]::Escape($expected)) {
+        throw "Missing '$expected' in $relativePath"
+      }
     }
   }
-}
 
-$css = Get-ChildItem -Path (Join-Path $output 'css') -Filter '*.css' -Recurse
-if ($css.Count -eq 0) { throw 'No compiled portfolio stylesheet found' }
+  $metadataPages = @('index.html', 'projects/index.html', 'about/index.html', 'projects/a-share-kline-terminal/index.html')
+  foreach ($relativePath in $metadataPages) {
+    $html = Get-Content -Raw -Encoding utf8 (Join-Path $output $relativePath)
+    foreach ($requiredAttribute in @('name\s*=\s*["'']?description', 'rel\s*=\s*["'']?canonical', 'property\s*=\s*["'']?og:title', 'property\s*=\s*["'']?og:description', 'property\s*=\s*["'']?og:url')) {
+      if ($html -notmatch $requiredAttribute) {
+        throw "Missing SEO metadata '$requiredAttribute' in $relativePath"
+      }
+    }
+    if ($html -notmatch 'href\s*=\s*["'']?/favicon\.svg') {
+      throw "Missing local favicon declaration in $relativePath"
+    }
+  }
+
+  $activeNavigation = @{
+    'index.html' = 'href\s*=\s*["'']?/["'']?\s+aria-current\s*=\s*["'']?page'
+    'projects/index.html' = 'href\s*=\s*["'']?/projects/["'']?\s+aria-current\s*=\s*["'']?page'
+    'about/index.html' = 'href\s*=\s*["'']?/about/["'']?\s+aria-current\s*=\s*["'']?page'
+  }
+  foreach ($relativePath in $activeNavigation.Keys) {
+    $html = Get-Content -Raw -Encoding utf8 (Join-Path $output $relativePath)
+    if ($html -notmatch $activeNavigation[$relativePath]) {
+      throw "Missing active navigation state in $relativePath"
+    }
+    if ([regex]::Matches($html, 'aria-current\s*=\s*["'']?page').Count -ne 1) {
+      throw "Expected exactly one active navigation item in $relativePath"
+    }
+  }
+
+  if (-not (Test-Path (Join-Path $output 'favicon.svg'))) {
+    throw 'No local favicon asset found in the generated site'
+  }
+
+  $css = Get-ChildItem -Path (Join-Path $output 'css') -Filter '*.css' -Recurse
+  if ($css.Count -eq 0) { throw 'No compiled portfolio stylesheet found' }
+  $compiledCss = ($css | ForEach-Object { Get-Content -Raw -Encoding utf8 $_.FullName }) -join "`n"
+  if ($compiledCss -notmatch 'prefers-reduced-motion\s*:\s*reduce') {
+    throw 'No reduced-motion stylesheet rule found'
+  }
+} finally {
+  Remove-Item -Recurse -Force $output -ErrorAction SilentlyContinue
+}

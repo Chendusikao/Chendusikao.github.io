@@ -6,6 +6,7 @@ featured = true
 weight = 10
 status = '开发中'
 summary = '一个正在开发中的 A 股 K 线可视化与分析终端。'
+description = '一个正在开发中的 A 股 K 线可视化与分析终端。'
 role = ''
 stack = []
 github = 'https://github.com/Chendusikao/a-share-kline-terminal'

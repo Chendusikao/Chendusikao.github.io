@@ -1,5 +1,5 @@
 baseURL = 'https://chendusikao.github.io/'
-languageCode = 'zh-CN'
+locale = 'zh-CN'
 defaultContentLanguage = 'zh-cn'
 title = '琛度思考'
 theme = 'ananke'
@@ -15,21 +15,22 @@ theme = 'ananke'
   resume = ''
 
 [params]
+  description = 'AI 应用开发工程师的项目作品集，展示正在开发和持续完善的项目。'
   skills = ['LLM 应用', 'RAG', 'Agent', 'Python', '后端开发', '前端开发', '部署上线']
 
 [[menu.main]]
   name = '首页'
-  url = '/'
+  pageRef = '/'
   weight = 1
 
 [[menu.main]]
   name = '项目'
-  url = '/projects/'
+  pageRef = '/projects'
   weight = 2
 
 [[menu.main]]
   name = '关于'
-  url = '/about/'
+  pageRef = '/about'
   weight = 3
 
 [[menu.main]]
