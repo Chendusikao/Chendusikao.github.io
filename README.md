@@ -33,6 +33,6 @@ demo = 'https://example.com/'
 +++
 ```
 
-Use only real project details. `role`, `stack`, `github`, and `demo` may be empty when the information or link is unavailable; the site will omit the corresponding UI. Set `featured` to `true` only for a project that should appear on the homepage.
+Use only real project details. `role` and `stack` may be empty when the information is unavailable; the project detail page will show the `未注明` fallback. `github` and `demo` may be empty when a link is unavailable; the site omits the corresponding link, and omits the links section when both are empty. Set `featured` to `true` only for a project that should appear on the homepage.
 
 Site-wide information lives in `hugo.toml`: `params.profile` contains `name`, `role`, and `summary`; `params.contact` contains `github`, `email`, and `resume`; and `params.skills` is the skills list. The author must replace empty `email` and `resume` values only with real contact details.
