@@ -12,7 +12,14 @@ github = 'https://github.com/Chendusikao/a-share-kline-terminal'
 demo = ''
 +++
 
-一个面向 A 股行情可视化与 K 线分析的终端项目，目前正在开发中。
+## 项目背景
 
-- 状态：开发中
-- [查看 GitHub 仓库](https://github.com/Chendusikao/a-share-kline-terminal)
+这是一个面向 A 股行情可视化与 K 线分析的终端项目。
+
+## 技术方案
+
+当前页面尚未列出技术栈或数据接入方式。
+
+## 当前进度
+
+项目状态：开发中。当前未提供演示地址。

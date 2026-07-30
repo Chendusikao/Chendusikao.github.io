@@ -1,0 +1,20 @@
+{{ define "main" }}
+  <section class="section" aria-labelledby="projects-title">
+    <div class="container">
+      <p class="eyebrow">项目作品</p>
+      <h1 id="projects-title">{{ .Title }}</h1>
+      {{ with .Content }}
+        <div class="lead">{{ . }}</div>
+      {{ end }}
+      {{ with .RegularPages.ByWeight }}
+        <div class="grid">
+          {{ range . }}
+            {{ partial "project-card.html" . }}
+          {{ end }}
+        </div>
+      {{ else }}
+        <p class="lead">项目内容正在整理中。</p>
+      {{ end }}
+    </div>
+  </section>
+{{ end }}

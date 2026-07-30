@@ -1,0 +1,26 @@
+{{ define "main" }}
+  <section class="section" aria-labelledby="page-title">
+    <div class="container">
+      <p class="eyebrow">文章</p>
+      <h1 id="page-title">{{ .Title }}</h1>
+      {{ with .Content }}
+        <div class="lead">{{ . }}</div>
+      {{ end }}
+      {{ with .RegularPages.ByDate.Reverse }}
+        <div class="grid">
+          {{ range . }}
+            <article class="card">
+              <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+              {{ with .Summary }}
+                <p>{{ . }}</p>
+              {{ end }}
+              <p><a href="{{ .RelPermalink }}">阅读全文</a></p>
+            </article>
+          {{ end }}
+        </div>
+      {{ else }}
+        <p class="lead">内容正在整理中。</p>
+      {{ end }}
+    </div>
+  </section>
+{{ end }}

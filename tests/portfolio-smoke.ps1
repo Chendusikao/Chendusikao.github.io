@@ -23,14 +23,18 @@ $checks = @{
   'index.html' = @(
     "AI $(ConvertFrom-CodePoints 0x5E94, 0x7528, 0x5F00, 0x53D1, 0x5DE5, 0x7A0B, 0x5E08)",
     (ConvertFrom-CodePoints 0x7CBE, 0x9009, 0x9879, 0x76EE),
-    "A $([char]0x80A1) K $([char]0x7EBF) $(ConvertFrom-CodePoints 0x7EC8, 0x7AEF)",
+    "A $([char]0x80A1) K $([char]0x7EBF)$(ConvertFrom-CodePoints 0x7EC8, 0x7AEF)",
     'github.com/Chendusikao/a-share-kline-terminal'
   )
   'projects/index.html' = @(
     (ConvertFrom-CodePoints 0x9879, 0x76EE),
-    "A $([char]0x80A1) K $([char]0x7EBF) $(ConvertFrom-CodePoints 0x7EC8, 0x7AEF)"
+    "A $([char]0x80A1) K $([char]0x7EBF)$(ConvertFrom-CodePoints 0x7EC8, 0x7AEF)"
   )
   'projects/a-share-kline-terminal/index.html' = @(
+    "A $([char]0x80A1) K $([char]0x7EBF)$(ConvertFrom-CodePoints 0x7EC8, 0x7AEF)",
+    (ConvertFrom-CodePoints 0x9879, 0x76EE, 0x80CC, 0x666F),
+    (ConvertFrom-CodePoints 0x6280, 0x672F, 0x65B9, 0x6848),
+    (ConvertFrom-CodePoints 0x5F53, 0x524D, 0x8FDB, 0x5EA6),
     (ConvertFrom-CodePoints 0x5F00, 0x53D1, 0x4E2D),
     "GitHub $(ConvertFrom-CodePoints 0x4ED3, 0x5E93)"
   )

@@ -1,0 +1,11 @@
+{{ define "main" }}
+  <article class="section" aria-labelledby="page-title">
+    <div class="container">
+      <p class="eyebrow">{{ .Section | default "页面" }}</p>
+      <h1 id="page-title">{{ .Title }}</h1>
+      <div class="section">
+        {{ .Content }}
+      </div>
+    </div>
+  </article>
+{{ end }}

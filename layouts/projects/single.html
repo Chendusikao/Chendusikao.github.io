@@ -1,0 +1,49 @@
+{{ define "main" }}
+  <article class="section" aria-labelledby="project-title">
+    <div class="container">
+      <header>
+        <p class="eyebrow">项目案例</p>
+        <h1 id="project-title">{{ .Title }}</h1>
+        {{ with .Params.status }}
+          <p><span class="chip">{{ . }}</span></p>
+        {{ end }}
+        {{ with .Params.summary }}
+          <p class="lead">{{ . }}</p>
+        {{ end }}
+      </header>
+
+      <section class="section" aria-labelledby="project-overview-title">
+        <h2 id="project-overview-title" class="section-title">项目概览</h2>
+        <p><strong>负责角色：</strong>{{ with .Params.role }}{{ . }}{{ else }}未注明{{ end }}</p>
+        <h3>技术栈</h3>
+        {{ with .Params.stack }}
+          <ul class="chip-list" aria-label="技术栈">
+            {{ range . }}
+              <li class="chip">{{ . }}</li>
+            {{ end }}
+          </ul>
+        {{ else }}
+          <p>未注明</p>
+        {{ end }}
+      </section>
+
+      <div class="section">
+        {{ .Content }}
+      </div>
+
+      {{ if or .Params.demo .Params.github }}
+        <section class="section" aria-labelledby="project-links-title">
+          <h2 id="project-links-title" class="section-title">项目链接</h2>
+          <p>
+            {{ with .Params.demo }}
+              <a class="button button--secondary" href="{{ . }}" rel="noreferrer" target="_blank">演示</a>
+            {{ end }}
+            {{ with .Params.github }}
+              <a class="button" href="{{ . }}" rel="noreferrer" target="_blank">GitHub 仓库</a>
+            {{ end }}
+          </p>
+        </section>
+      {{ end }}
+    </div>
+  </article>
+{{ end }}
