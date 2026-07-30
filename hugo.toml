@@ -1,7 +1,21 @@
 baseURL = 'https://chendusikao.github.io/'
-locale = 'en-us'
+languageCode = 'zh-CN'
+defaultContentLanguage = 'zh-CN'
 title = '琛度思考'
 theme = 'ananke'
+
+[params.profile]
+  name = 'Chendusikao'
+  role = 'AI 应用开发工程师'
+  summary = '从需求梳理到 AI 能力接入、前后端实现与部署上线，构建可用的智能应用。'
+
+[params.contact]
+  github = 'https://github.com/Chendusikao'
+  email = ''
+  resume = ''
+
+[params]
+  skills = ['LLM 应用', 'RAG', 'Agent', 'Python', '后端开发', '前端开发', '部署上线']
 
 [[menu.main]]
   name = '项目'

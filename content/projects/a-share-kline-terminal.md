@@ -2,6 +2,14 @@
 title = 'A 股 K 线终端'
 date = '2026-07-30T18:00:00+08:00'
 draft = false
+featured = true
+weight = 10
+status = '开发中'
+summary = '一个正在开发中的 A 股 K 线可视化与分析终端。'
+role = ''
+stack = []
+github = 'https://github.com/Chendusikao/a-share-kline-terminal'
+demo = ''
 +++
 
 一个面向 A 股行情可视化与 K 线分析的终端项目，目前正在开发中。
