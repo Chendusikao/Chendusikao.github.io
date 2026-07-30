@@ -43,3 +43,6 @@ foreach ($relativePath in $checks.Keys) {
     }
   }
 }
+
+$css = Get-ChildItem -Path (Join-Path $output 'css') -Filter '*.css' -Recurse
+if ($css.Count -eq 0) { throw 'No compiled portfolio stylesheet found' }

@@ -1,0 +1,12 @@
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="site-brand" href="{{ site.Home.RelPermalink }}">{{ site.Title }}</a>
+    {{ with site.Menus.main }}
+      <nav class="site-nav" aria-label="主导航">
+        {{ range . }}
+          <a class="site-nav__link" href="{{ .URL }}"{{ if or ($.IsMenuCurrent "main" .) ($.HasMenuCurrent "main" .) }} aria-current="page"{{ end }}>{{ .Name }}</a>
+        {{ end }}
+      </nav>
+    {{ end }}
+  </div>
+</header>

@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="{{ site.Language.Lang | default "zh-CN" }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ block "title" . }}{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} | {{ site.Title }}{{ end }}{{ end }}</title>
+    {{ $style := resources.Get "css/portfolio.css" | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
+  </head>
+  <body>
+    <div class="site-shell">
+      {{ partial "site-header.html" . }}
+      <main id="main" class="site-main">
+        {{ block "main" . }}{{ end }}
+      </main>
+      {{ partial "site-footer.html" . }}
+    </div>
+  </body>
+</html>
