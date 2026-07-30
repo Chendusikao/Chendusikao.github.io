@@ -11,7 +11,7 @@ function ConvertFrom-CodePoints {
 
 try {
   $config = Get-Content -Raw -Encoding utf8 (Join-Path $root 'hugo.toml')
-  if ($config -notmatch "(?m)^locale = 'zh-CN'$") {
+  if ($config -notmatch "(?m)^locale = 'zh-CN'\r?$") {
     throw "hugo.toml must declare locale = 'zh-CN'"
   }
   if ($config -match '(?m)^languageCode\s*=') {
