@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>A 股 K 线终端 · 静态演示</title>
+    <meta name="description" content="A 股 K 线终端的静态交互演示，使用示例数据，不提供实时行情。">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="terminal-shell">
+      <a class="back-link" href="/projects/a-share-kline-terminal/">← 返回项目案例</a>
+
+      <header class="terminal-header">
+        <div>
+          <p class="eyebrow">STATIC PRODUCT DEMO</p>
+          <h1>A 股 K 线终端 · 静态演示</h1>
+          <p class="subtitle">K 线、指标与透明技术评分的界面交互展示</p>
+        </div>
+        <span class="demo-badge">● 示例模式</span>
+      </header>
+
+      <p class="notice" role="note">示例数据，非实时行情，不构成投资建议</p>
+
+      <section class="stock-summary" aria-label="示例标的信息">
+        <div>
+          <p class="eyebrow">SAMPLE INSTRUMENT</p>
+          <h2>华夏示例</h2>
+          <p>600000 · SH · 前复权日线</p>
+        </div>
+        <dl>
+          <div><dt>示例收盘</dt><dd>37.42</dd></div>
+          <div><dt>技术面总分</dt><dd>72 <small>/ 100</small></dd></div>
+          <div><dt>示例状态</dt><dd class="up">偏强</dd></div>
+        </dl>
+      </section>
+
+      <section class="controls" aria-label="图表控制">
+        <div class="control-group">
+          <span>查看区间</span>
+          <div role="group" aria-label="查看区间">
+            <button data-range="3m" type="button" aria-pressed="false">近 3 月</button>
+            <button data-range="6m" type="button" aria-pressed="false">近 6 月</button>
+            <button data-range="1y" type="button" aria-pressed="true">近 1 年</button>
+          </div>
+        </div>
+        <fieldset class="indicator-group">
+          <legend>展示指标</legend>
+          <label><input data-indicator="ma" type="checkbox" checked> MA</label>
+          <label><input data-indicator="macd" type="checkbox" checked> MACD</label>
+          <label><input data-indicator="rsi" type="checkbox"> RSI</label>
+        </fieldset>
+      </section>
+
+      <section class="demo-grid">
+        <section class="chart-card" aria-labelledby="chart-title">
+          <header>
+            <div>
+              <p class="eyebrow">CHART WORKSPACE</p>
+              <h2 id="chart-title">示例 K 线与指标</h2>
+            </div>
+            <span id="range-label">近 1 年 · 252 根示例日线</span>
+          </header>
+          <canvas id="chart" aria-label="华夏示例的 K 线、成交量与技术指标图"></canvas>
+          <p class="chart-hint">可切换周期和指标。图形在浏览器本地绘制。</p>
+        </section>
+
+        <aside class="analysis-rail" aria-label="技术面解读">
+          <section class="score-card">
+            <p>技术面总分</p>
+            <div><strong id="score-total">72</strong><span>/ 100</span></div>
+            <em>偏强（示例）</em>
+            <ul class="score-breakdown" aria-label="示例评分构成">
+              <li><span>趋势</span><i><b style="width: 78%"></b></i><strong>78</strong></li>
+              <li><span>动量</span><i><b style="width: 69%"></b></i><strong>69</strong></li>
+              <li><span>量价</span><i><b style="width: 64%"></b></i><strong>64</strong></li>
+              <li><span>关键位置</span><i><b style="width: 73%"></b></i><strong>73</strong></li>
+              <li><span>风险质量</span><i><b style="width: 76%"></b></i><strong>76</strong></li>
+            </ul>
+          </section>
+
+          <section class="insight-panel">
+            <header><h2>结构化解读</h2><span>示例输出</span></header>
+            <div id="insights"></div>
+          </section>
+        </aside>
+      </section>
+
+      <section class="method-note" aria-labelledby="method-title">
+        <h2 id="method-title">演示说明</h2>
+        <p>完整项目在 Windows 本机运行，包含 React、FastAPI、AKShare 与 SQLite。本页只复现产品界面和部分交互流程，不连接真实行情或扫描服务。</p>
+      </section>
+    </main>
+    <noscript>此静态演示需要启用 JavaScript 才能绘制示例图表。</noscript>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

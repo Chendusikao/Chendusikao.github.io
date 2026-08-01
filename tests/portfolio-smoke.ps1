@@ -56,8 +56,9 @@ $checks = @{
     (ConvertFrom-CodePoints 0x9879, 0x76EE, 0x80CC, 0x666F),
     (ConvertFrom-CodePoints 0x6280, 0x672F, 0x65B9, 0x6848),
     (ConvertFrom-CodePoints 0x5F53, 0x524D, 0x8FDB, 0x5EA6),
-    (ConvertFrom-CodePoints 0x5F00, 0x53D1, 0x4E2D),
-    "GitHub $(ConvertFrom-CodePoints 0x4ED3, 0x5E93)"
+    "$(ConvertFrom-CodePoints 0x672C, 0x5730, 0x8FD0, 0x884C) + $(ConvertFrom-CodePoints 0x9759, 0x6001, 0x6F14, 0x793A)",
+    "GitHub $(ConvertFrom-CodePoints 0x4ED3, 0x5E93)",
+    '/a-share-kline-demo/'
   )
   'projects/rent-contract-ai-assistant/index.html' = @(
     "$(ConvertFrom-CodePoints 0x79DF, 0x623F, 0x5408, 0x540C) AI $(ConvertFrom-CodePoints 0x667A, 0x80FD, 0x5206, 0x6790, 0x52A9, 0x624B)",
@@ -117,6 +118,37 @@ $checks = @{
   $compiledCss = ($css | ForEach-Object { Get-Content -Raw -Encoding utf8 $_.FullName }) -join "`n"
   if ($compiledCss -notmatch 'prefers-reduced-motion\s*:\s*reduce') {
     throw 'No reduced-motion stylesheet rule found'
+  }
+
+  $demoRoot = Join-Path $output 'a-share-kline-demo'
+  foreach ($relativePath in @('index.html', 'styles.css', 'demo-data.js', 'app.js')) {
+    if (-not (Test-Path (Join-Path $demoRoot $relativePath))) {
+      throw "Missing A-share static demo asset: $relativePath"
+    }
+  }
+
+  $demoHtml = Get-Content -Raw -Encoding utf8 (Join-Path $demoRoot 'index.html')
+  $demoExpected = @(
+    "A $([char]0x80A1) K $([char]0x7EBF)$(ConvertFrom-CodePoints 0x7EC8, 0x7AEF) $([char]0x00B7) $(ConvertFrom-CodePoints 0x9759, 0x6001, 0x6F14, 0x793A)",
+    (ConvertFrom-CodePoints 0x793A, 0x4F8B, 0x6570, 0x636E, 0xFF0C, 0x975E, 0x5B9E, 0x65F6, 0x884C, 0x60C5, 0xFF0C, 0x4E0D, 0x6784, 0x6210, 0x6295, 0x8D44, 0x5EFA, 0x8BAE),
+    "$(ConvertFrom-CodePoints 0x8FD1) 3 $(ConvertFrom-CodePoints 0x6708)",
+    "$(ConvertFrom-CodePoints 0x8FD1) 6 $(ConvertFrom-CodePoints 0x6708)",
+    "$(ConvertFrom-CodePoints 0x8FD1) 1 $(ConvertFrom-CodePoints 0x5E74)",
+    'MA',
+    'MACD',
+    'RSI',
+    (ConvertFrom-CodePoints 0x6280, 0x672F, 0x9762, 0x603B, 0x5206),
+    (ConvertFrom-CodePoints 0x7ED3, 0x6784, 0x5316, 0x89E3, 0x8BFB)
+  )
+  foreach ($expected in $demoExpected) {
+    if ($demoHtml -notmatch [regex]::Escape($expected)) {
+      throw "Missing '$expected' in A-share static demo"
+    }
+  }
+
+  $demoScript = Get-Content -Raw -Encoding utf8 (Join-Path $demoRoot 'app.js')
+  if ($demoScript -match '\bfetch\s*\(') {
+    throw 'A-share static demo must not request external APIs'
   }
 } finally {
   Remove-Item -Recurse -Force $output -ErrorAction SilentlyContinue
