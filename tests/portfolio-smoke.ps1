@@ -41,11 +41,15 @@ $checks = @{
     "AI $(ConvertFrom-CodePoints 0x5E94, 0x7528, 0x5F00, 0x53D1, 0x5DE5, 0x7A0B, 0x5E08)",
     (ConvertFrom-CodePoints 0x7CBE, 0x9009, 0x9879, 0x76EE),
     "A $([char]0x80A1) K $([char]0x7EBF)$(ConvertFrom-CodePoints 0x7EC8, 0x7AEF)",
-    'github.com/Chendusikao/a-share-kline-terminal'
+    'github.com/Chendusikao/a-share-kline-terminal',
+    "$(ConvertFrom-CodePoints 0x79DF, 0x623F, 0x5408, 0x540C) AI $(ConvertFrom-CodePoints 0x667A, 0x80FD, 0x5206, 0x6790, 0x52A9, 0x624B)",
+    'github.com/Chendusikao/rent-contract-ai-assistant'
   )
   'projects/index.html' = @(
     (ConvertFrom-CodePoints 0x9879, 0x76EE),
-    "A $([char]0x80A1) K $([char]0x7EBF)$(ConvertFrom-CodePoints 0x7EC8, 0x7AEF)"
+    "A $([char]0x80A1) K $([char]0x7EBF)$(ConvertFrom-CodePoints 0x7EC8, 0x7AEF)",
+    "$(ConvertFrom-CodePoints 0x79DF, 0x623F, 0x5408, 0x540C) AI $(ConvertFrom-CodePoints 0x667A, 0x80FD, 0x5206, 0x6790, 0x52A9, 0x624B)",
+    (ConvertFrom-CodePoints 0x53EF, 0x672C, 0x5730, 0x8FD0, 0x884C)
   )
   'projects/a-share-kline-terminal/index.html' = @(
     "A $([char]0x80A1) K $([char]0x7EBF)$(ConvertFrom-CodePoints 0x7EC8, 0x7AEF)",
@@ -53,6 +57,16 @@ $checks = @{
     (ConvertFrom-CodePoints 0x6280, 0x672F, 0x65B9, 0x6848),
     (ConvertFrom-CodePoints 0x5F53, 0x524D, 0x8FDB, 0x5EA6),
     (ConvertFrom-CodePoints 0x5F00, 0x53D1, 0x4E2D),
+    "GitHub $(ConvertFrom-CodePoints 0x4ED3, 0x5E93)"
+  )
+  'projects/rent-contract-ai-assistant/index.html' = @(
+    "$(ConvertFrom-CodePoints 0x79DF, 0x623F, 0x5408, 0x540C) AI $(ConvertFrom-CodePoints 0x667A, 0x80FD, 0x5206, 0x6790, 0x52A9, 0x624B)",
+    (ConvertFrom-CodePoints 0x9879, 0x76EE, 0x80CC, 0x666F),
+    (ConvertFrom-CodePoints 0x6280, 0x672F, 0x65B9, 0x6848),
+    (ConvertFrom-CodePoints 0x6280, 0x672F, 0x6808),
+    (ConvertFrom-CodePoints 0x5F53, 0x524D, 0x8FDB, 0x5EA6),
+    (ConvertFrom-CodePoints 0x53EF, 0x672C, 0x5730, 0x8FD0, 0x884C),
+    (ConvertFrom-CodePoints 0x6682, 0x65E0, 0x7EBF, 0x4E0A, 0x6F14, 0x793A),
     "GitHub $(ConvertFrom-CodePoints 0x4ED3, 0x5E93)"
   )
 }
@@ -66,7 +80,7 @@ $checks = @{
     }
   }
 
-  $metadataPages = @('index.html', 'projects/index.html', 'about/index.html', 'projects/a-share-kline-terminal/index.html')
+  $metadataPages = @('index.html', 'projects/index.html', 'about/index.html', 'projects/a-share-kline-terminal/index.html', 'projects/rent-contract-ai-assistant/index.html')
   foreach ($relativePath in $metadataPages) {
     $html = Get-Content -Raw -Encoding utf8 (Join-Path $output $relativePath)
     foreach ($requiredAttribute in @('name\s*=\s*["'']?description', 'rel\s*=\s*["'']?canonical', 'property\s*=\s*["'']?og:title', 'property\s*=\s*["'']?og:description', 'property\s*=\s*["'']?og:url')) {
