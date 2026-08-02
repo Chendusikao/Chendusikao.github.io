@@ -150,6 +150,12 @@ $checks = @{
   if ($demoScript -match '\bfetch\s*\(') {
     throw 'A-share static demo must not request external APIs'
   }
+
+  foreach ($token in @('pointermove', 'pointerdown', 'Escape', 'selectedIndex', 'tooltip-date', 'tooltip-open', 'tooltip-close')) {
+    if ($demoScript -notmatch [regex]::Escape($token)) {
+      throw "Missing K-line inspection behavior: $token"
+    }
+  }
 } finally {
   Remove-Item -Recurse -Force $output -ErrorAction SilentlyContinue
 }
