@@ -5,11 +5,26 @@ const canvas = document.querySelector("#chart");
 const context = canvas.getContext("2d");
 const rangeLabel = document.querySelector("#range-label");
 const insightHost = document.querySelector("#insights");
+const tooltip = document.querySelector("#chart-tooltip");
+const tooltipFields = {
+  date: document.querySelector("#tooltip-date"),
+  open: document.querySelector("#tooltip-open"),
+  high: document.querySelector("#tooltip-high"),
+  low: document.querySelector("#tooltip-low"),
+  close: document.querySelector("#tooltip-close"),
+  change: document.querySelector("#tooltip-change"),
+  volume: document.querySelector("#tooltip-volume"),
+  state: document.querySelector("#tooltip-state"),
+};
 
 const state = {
   range: "1y",
   indicators: new Set(["ma", "macd"]),
+  hoveredIndex: null,
+  selectedIndex: null,
 };
+
+let chartLayout = null;
 
 const insights = [
   { tone: "bullish", label: "趋势 · 示例", summary: "价格位于示例均线附近，趋势项给出偏强分数。" },
@@ -93,6 +108,51 @@ function drawGrid(width, top, height, left, right) {
   }
 }
 
+function formatVolume(value) {
+  return `${(value / 10000).toFixed(1)} 万`;
+}
+
+function hideInspection() {
+  tooltip.hidden = true;
+}
+
+function updateInspection(candles, index) {
+  if (index === null || index === undefined || !candles[index]) {
+    hideInspection();
+    return;
+  }
+
+  const item = candles[index];
+  const previousClose = candles[index - 1]?.close;
+  const change = previousClose ? ((item.close - previousClose) / previousClose) * 100 : null;
+  tooltipFields.date.textContent = `${item.date} · 示例日线`;
+  tooltipFields.open.textContent = item.open.toFixed(2);
+  tooltipFields.high.textContent = item.high.toFixed(2);
+  tooltipFields.low.textContent = item.low.toFixed(2);
+  tooltipFields.close.textContent = item.close.toFixed(2);
+  tooltipFields.change.textContent = change === null ? "--" : `${change >= 0 ? "+" : ""}${change.toFixed(2)}%`;
+  tooltipFields.volume.textContent = formatVolume(item.volume);
+  tooltipFields.state.textContent = state.selectedIndex === index ? "已固定 · 点击图表空白处或按 Esc 取消" : "悬停查看 · 点击可固定";
+  tooltip.hidden = false;
+}
+
+function indexAtPointer(event) {
+  if (!chartLayout) return null;
+  const rect = canvas.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+  const { candles, padding, step, priceTop, priceHeight, plotWidth } = chartLayout;
+  if (x < padding.left || x > padding.left + plotWidth || y < priceTop || y > priceTop + priceHeight) return null;
+  const index = Math.round((x - padding.left - step / 2) / step);
+  return Math.max(0, Math.min(candles.length - 1, index));
+}
+
+function clearInspection() {
+  state.hoveredIndex = null;
+  state.selectedIndex = null;
+  hideInspection();
+}
+
 function drawChart() {
   const { width, height } = canvasSize();
   const candles = visibleSeries(allCandles, state.range);
@@ -110,6 +170,7 @@ function drawChart() {
   const step = plotWidth / candles.length;
   const candleWidth = Math.max(1, step * 0.62);
   const scaleY = (value) => priceTop + ((max - value) / priceSpan) * priceHeight;
+  chartLayout = { candles, padding, step, priceTop, priceHeight, plotWidth };
 
   context.clearRect(0, 0, width, height);
   context.fillStyle = "#081523";
@@ -186,6 +247,35 @@ function drawChart() {
     context.fillText("选择 MACD 或 RSI 以显示副图", padding.left, oscillatorTop + oscillatorHeight / 2);
   }
 
+  const activeIndex = state.selectedIndex ?? state.hoveredIndex;
+  if (activeIndex !== null && candles[activeIndex]) {
+    const active = candles[activeIndex];
+    const x = padding.left + step * activeIndex + step / 2;
+    const y = scaleY(active.close);
+    context.save();
+    context.setLineDash([4, 4]);
+    context.strokeStyle = "#8ab4f8";
+    context.lineWidth = 1;
+    context.beginPath();
+    context.moveTo(x, priceTop);
+    context.lineTo(x, priceTop + priceHeight);
+    context.moveTo(padding.left, y);
+    context.lineTo(width - padding.right, y);
+    context.stroke();
+    context.setLineDash([]);
+    if (state.selectedIndex === activeIndex) {
+      context.strokeStyle = "#f0bb5c";
+      context.lineWidth = 2;
+      context.strokeRect(x - candleWidth / 2 - 3, Math.min(scaleY(active.open), scaleY(active.close)) - 3, candleWidth + 6, Math.max(8, Math.abs(scaleY(active.open) - scaleY(active.close)) + 6));
+      context.fillStyle = "#f0bb5c";
+      context.fillText("已固定", Math.min(width - padding.right - 38, x + 6), priceTop + 14);
+    }
+    context.restore();
+    updateInspection(candles, activeIndex);
+  } else {
+    hideInspection();
+  }
+
   rangeLabel.textContent = `${state.range === "3m" ? "近 3 月" : state.range === "6m" ? "近 6 月" : "近 1 年"} · ${candles.length} 根示例日线`;
 }
 
@@ -204,6 +294,7 @@ function syncControls() {
 
 document.querySelectorAll("[data-range]").forEach((button) => {
   button.addEventListener("click", () => {
+    clearInspection();
     state.range = button.dataset.range;
     syncControls();
     drawChart();
@@ -212,6 +303,7 @@ document.querySelectorAll("[data-range]").forEach((button) => {
 
 document.querySelectorAll("[data-indicator]").forEach((input) => {
   input.addEventListener("change", () => {
+    clearInspection();
     const name = input.dataset.indicator;
     if (name === "macd" || name === "rsi") {
       state.indicators.delete(name === "macd" ? "rsi" : "macd");
@@ -221,6 +313,32 @@ document.querySelectorAll("[data-indicator]").forEach((input) => {
     syncControls();
     drawChart();
   });
+});
+
+canvas.addEventListener("pointermove", (event) => {
+  if (state.selectedIndex !== null) return;
+  state.hoveredIndex = indexAtPointer(event);
+  drawChart();
+});
+
+canvas.addEventListener("pointerdown", (event) => {
+  const index = indexAtPointer(event);
+  state.selectedIndex = index === state.selectedIndex ? null : index;
+  state.hoveredIndex = state.selectedIndex;
+  drawChart();
+});
+
+canvas.addEventListener("pointerleave", () => {
+  if (state.selectedIndex !== null) return;
+  state.hoveredIndex = null;
+  drawChart();
+});
+
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    clearInspection();
+    drawChart();
+  }
 });
 
 new ResizeObserver(drawChart).observe(canvas);

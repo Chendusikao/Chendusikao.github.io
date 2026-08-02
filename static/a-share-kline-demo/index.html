@@ -63,6 +63,18 @@
             <span id="range-label">近 1 年 · 252 根示例日线</span>
           </header>
           <canvas id="chart" aria-label="华夏示例的 K 线、成交量与技术指标图"></canvas>
+          <section class="chart-tooltip" id="chart-tooltip" aria-live="polite" hidden>
+            <p id="tooltip-date"></p>
+            <dl>
+              <div><dt>开</dt><dd id="tooltip-open"></dd></div>
+              <div><dt>高</dt><dd id="tooltip-high"></dd></div>
+              <div><dt>低</dt><dd id="tooltip-low"></dd></div>
+              <div><dt>收</dt><dd id="tooltip-close"></dd></div>
+              <div><dt>涨跌</dt><dd id="tooltip-change"></dd></div>
+              <div><dt>成交量</dt><dd id="tooltip-volume"></dd></div>
+            </dl>
+            <small id="tooltip-state"></small>
+          </section>
           <p class="chart-hint">可切换周期和指标。图形在浏览器本地绘制。</p>
         </section>
 

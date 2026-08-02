@@ -84,10 +84,17 @@ h2 { margin-bottom: 6px; font-size: 1.1rem; }
 
 .demo-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr); gap: 18px; }
 .chart-card, .analysis-rail, .method-note { padding: 20px; }
+.chart-card { position: relative; }
 .chart-card header { align-items: baseline; }
 .chart-card header h2 { font-size: 1.25rem; }
 #range-label { color: var(--muted); font-size: .8rem; }
-#chart { display: block; width: 100%; min-height: 480px; margin-top: 12px; border: 1px solid #1e3852; background: #081523; }
+#chart { display: block; width: 100%; min-height: 480px; margin-top: 12px; border: 1px solid #1e3852; background: #081523; cursor: crosshair; touch-action: manipulation; }
+.chart-tooltip { position: absolute; z-index: 1; top: 76px; right: 30px; min-width: 226px; padding: 12px; color: #dcecff; border: 1px solid #315270; border-radius: 8px; background: rgb(5 16 28 / 94%); box-shadow: 0 12px 32px rgb(0 0 0 / 28%); pointer-events: none; }
+.chart-tooltip > p { margin: 0 0 9px; color: var(--accent); font-weight: 750; font-variant-numeric: tabular-nums; }
+.chart-tooltip dl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 12px; margin: 0; }
+.chart-tooltip dt { margin-bottom: 2px; color: var(--muted); font-size: .7rem; }
+.chart-tooltip dd { margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .78rem; font-variant-numeric: tabular-nums; }
+.chart-tooltip small { display: block; margin-top: 10px; color: var(--muted); font-size: .72rem; }
 .chart-hint { margin: 10px 0 0; font-size: .82rem; }
 
 .analysis-rail { display: grid; align-content: start; gap: 18px; }
@@ -130,4 +137,5 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   .control-group, .indicator-group { flex-wrap: wrap; }
   .indicator-group legend { float: none; width: 100%; }
   #chart { min-height: 320px; }
+  .chart-tooltip { top: auto; right: 30px; bottom: 52px; left: 30px; min-width: 0; }
 }
