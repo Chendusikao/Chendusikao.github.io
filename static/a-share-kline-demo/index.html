@@ -53,6 +53,43 @@
         </fieldset>
       </section>
 
+      <section class="learning-grid" aria-label="新手引导与参数预设">
+        <article class="learning-card">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">BEGINNER MODE</p>
+              <h2>新手引导</h2>
+            </div>
+            <span class="feature-tag">静态示例</span>
+          </div>
+          <p id="guide-copy">先从趋势预设开始，再点击图表中的 K 线查看开高低收；点击“定位图表”可跳到对应证据。所有内容均来自固定示例数据。</p>
+          <div class="glossary-row" role="group" aria-label="指标小词典">
+            <span>指标小词典</span>
+            <button data-glossary="ma" type="button">MA</button>
+            <button data-glossary="macd" type="button">MACD</button>
+            <button data-glossary="rsi" type="button">RSI</button>
+          </div>
+          <p class="glossary-copy" id="glossary-copy">MA：观察一段时间内的平均价格，帮助识别趋势方向。</p>
+          <button class="evidence-link" data-evidence="guide" type="button">定位图表 →</button>
+        </article>
+
+        <article class="preset-card">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">ANALYSIS PRESETS</p>
+              <h2>快速预设</h2>
+            </div>
+            <span class="feature-tag">可交互</span>
+          </div>
+          <div class="preset-row" role="group" aria-label="分析预设">
+            <button data-preset="trend" type="button" aria-pressed="true">趋势</button>
+            <button data-preset="swing" type="button" aria-pressed="false">波段</button>
+            <button data-preset="short" type="button" aria-pressed="false">短线</button>
+          </div>
+          <p id="preset-copy">趋势预设：近 1 年 + MA / MACD，适合先看整体方向。</p>
+        </article>
+      </section>
+
       <section class="demo-grid">
         <section class="chart-card" aria-labelledby="chart-title">
           <header>
@@ -101,7 +138,7 @@
 
       <section class="method-note" aria-labelledby="method-title">
         <h2 id="method-title">演示说明</h2>
-        <p>完整项目在 Windows 本机运行，包含 React、FastAPI、AKShare 与 SQLite。本页只复现产品界面和部分交互流程，不连接真实行情或扫描服务。</p>
+        <p>完整项目在 Windows 本机运行，包含 React、FastAPI、AKShare 与 SQLite。本页复现新手引导、指标词典、参数预设、证据导航和 K 线查看等界面交互，不连接真实行情或扫描服务。</p>
       </section>
     </main>
     <noscript>此静态演示需要启用 JavaScript 才能绘制示例图表。</noscript>

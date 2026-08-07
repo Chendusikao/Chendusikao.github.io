@@ -138,7 +138,12 @@ $checks = @{
     'MACD',
     'RSI',
     (ConvertFrom-CodePoints 0x6280, 0x672F, 0x9762, 0x603B, 0x5206),
-    (ConvertFrom-CodePoints 0x7ED3, 0x6784, 0x5316, 0x89E3, 0x8BFB)
+    (ConvertFrom-CodePoints 0x7ED3, 0x6784, 0x5316, 0x89E3, 0x8BFB),
+    (ConvertFrom-CodePoints 0x65B0, 0x624B, 0x5F15, 0x5BFC),
+    (ConvertFrom-CodePoints 0x6307, 0x6807, 0x8BCD, 0x5178),
+    (ConvertFrom-CodePoints 0x5B9A, 0x4F4D, 0x56FE, 0x8868),
+    'data-preset=',
+    'data-evidence='
   )
   foreach ($expected in $demoExpected) {
     if ($demoHtml -notmatch [regex]::Escape($expected)) {
@@ -154,6 +159,11 @@ $checks = @{
   foreach ($token in @('pointermove', 'pointerdown', 'Escape', 'selectedIndex', 'tooltip-date', 'tooltip-open', 'tooltip-close')) {
     if ($demoScript -notmatch [regex]::Escape($token)) {
       throw "Missing K-line inspection behavior: $token"
+    }
+  }
+  foreach ($token in @('applyPreset', 'glossary', 'scrollIntoView', 'evidenceTarget')) {
+    if ($demoScript -notmatch [regex]::Escape($token)) {
+      throw "Missing A-share demo learning interaction: $token"
     }
   }
 } finally {

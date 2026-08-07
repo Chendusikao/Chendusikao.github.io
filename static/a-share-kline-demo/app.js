@@ -5,6 +5,9 @@ const canvas = document.querySelector("#chart");
 const context = canvas.getContext("2d");
 const rangeLabel = document.querySelector("#range-label");
 const insightHost = document.querySelector("#insights");
+const guideCopy = document.querySelector("#guide-copy");
+const glossaryCopy = document.querySelector("#glossary-copy");
+const presetCopy = document.querySelector("#preset-copy");
 const tooltip = document.querySelector("#chart-tooltip");
 const tooltipFields = {
   date: document.querySelector("#tooltip-date"),
@@ -22,15 +25,28 @@ const state = {
   indicators: new Set(["ma", "macd"]),
   hoveredIndex: null,
   selectedIndex: null,
+  evidenceTarget: null,
 };
 
 let chartLayout = null;
 
 const insights = [
-  { tone: "bullish", label: "趋势 · 示例", summary: "价格位于示例均线附近，趋势项给出偏强分数。" },
-  { tone: "neutral", label: "动量 · 示例", summary: "副图指标位于中性区间，展示结构化证据的呈现方式。" },
-  { tone: "bullish", label: "风险质量 · 示例", summary: "波动幅度处于示例阈值内；这不是任何交易建议。" },
+  { tone: "bullish", label: "趋势 · 示例", summary: "价格位于示例均线附近，趋势项给出偏强分数。", evidence: "ma" },
+  { tone: "neutral", label: "动量 · 示例", summary: "副图指标位于中性区间，展示结构化证据的呈现方式。", evidence: "macd" },
+  { tone: "bullish", label: "风险质量 · 示例", summary: "波动幅度处于示例阈值内；这不是任何交易建议。", evidence: "volume" },
 ];
+
+const glossary = {
+  ma: "MA：观察一段时间内的平均价格，帮助识别趋势方向。",
+  macd: "MACD：比较快慢均线差异，辅助观察趋势动量变化。",
+  rsi: "RSI：用 0–100 的示例区间观察近期价格动能，不代表买卖建议。",
+};
+
+const presets = {
+  trend: { range: "1y", indicators: ["ma", "macd"], copy: "趋势预设：近 1 年 + MA / MACD，适合先看整体方向。" },
+  swing: { range: "6m", indicators: ["ma", "rsi"], copy: "波段预设：近 6 月 + MA / RSI，适合观察阶段性节奏。" },
+  short: { range: "3m", indicators: ["rsi"], copy: "短线预设：近 3 月 + RSI，适合演示近期动能查看。" },
+};
 
 function visibleSeries(all, range) {
   return all.slice(range === "3m" ? -63 : range === "6m" ? -126 : -252);
@@ -280,7 +296,43 @@ function drawChart() {
 }
 
 function renderInsights() {
-  insightHost.innerHTML = insights.map((item) => `<article class="insight ${item.tone}"><div><span>${item.label}</span><span>固定数据</span></div><p>${item.summary}</p></article>`).join("");
+  insightHost.innerHTML = insights.map((item) => `<article class="insight ${item.tone}"><div><span>${item.label}</span><span>固定数据</span></div><p>${item.summary}</p><button class="evidence-link" data-evidence="${item.evidence}" type="button">定位图表 →</button></article>`).join("");
+}
+
+function syncPresetButtons(activePreset) {
+  document.querySelectorAll("[data-preset]").forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.preset === activePreset));
+  });
+}
+
+function applyPreset(name) {
+  const preset = presets[name];
+  if (!preset) return;
+  clearInspection();
+  state.range = preset.range;
+  state.indicators = new Set(preset.indicators);
+  presetCopy.textContent = preset.copy;
+  guideCopy.textContent = `${preset.copy} 点击图表中的 K 线可查看对应示例证据。`;
+  syncPresetButtons(name);
+  syncControls();
+  drawChart();
+}
+
+function focusEvidence(target) {
+  state.evidenceTarget = target;
+  if (target === "ma") {
+    state.indicators.add("ma");
+    state.indicators.delete("rsi");
+  }
+  if (target === "macd") {
+    state.indicators.add("macd");
+    state.indicators.delete("rsi");
+  }
+  syncControls();
+  document.querySelector("#chart").scrollIntoView({ behavior: "smooth", block: "center" });
+  canvas.classList.remove("evidence-focus");
+  requestAnimationFrame(() => canvas.classList.add("evidence-focus"));
+  drawChart();
 }
 
 function syncControls() {
@@ -315,6 +367,22 @@ document.querySelectorAll("[data-indicator]").forEach((input) => {
   });
 });
 
+document.querySelectorAll("[data-glossary]").forEach((button) => {
+  button.addEventListener("click", () => {
+    glossaryCopy.textContent = glossary[button.dataset.glossary];
+    document.querySelectorAll("[data-glossary]").forEach((item) => item.classList.toggle("is-active", item === button));
+  });
+});
+
+document.querySelectorAll("[data-preset]").forEach((button) => {
+  button.addEventListener("click", () => applyPreset(button.dataset.preset));
+});
+
+renderInsights();
+document.querySelectorAll("[data-evidence]").forEach((button) => {
+  button.addEventListener("click", () => focusEvidence(button.dataset.evidence));
+});
+
 canvas.addEventListener("pointermove", (event) => {
   if (state.selectedIndex !== null) return;
   state.hoveredIndex = indexAtPointer(event);
@@ -342,6 +410,6 @@ window.addEventListener("keydown", (event) => {
 });
 
 new ResizeObserver(drawChart).observe(canvas);
-renderInsights();
 syncControls();
+syncPresetButtons("trend");
 drawChart();
