@@ -43,13 +43,16 @@ $checks = @{
     "A $([char]0x80A1) K $([char]0x7EBF)$(ConvertFrom-CodePoints 0x7EC8, 0x7AEF)",
     'github.com/Chendusikao/a-share-kline-terminal',
     "$(ConvertFrom-CodePoints 0x79DF, 0x623F, 0x5408, 0x540C) AI $(ConvertFrom-CodePoints 0x667A, 0x80FD, 0x5206, 0x6790, 0x52A9, 0x624B)",
-    'github.com/Chendusikao/rent-contract-ai-assistant'
+    'github.com/Chendusikao/rent-contract-ai-assistant',
+    "$(ConvertFrom-CodePoints 0x591A, 0x6A21, 0x6001) RAG $(ConvertFrom-CodePoints 0x77E5, 0x8BC6, 0x5E93)",
+    'github.com/Chendusikao/rag-knowledge-base'
   )
   'projects/index.html' = @(
     (ConvertFrom-CodePoints 0x9879, 0x76EE),
     "A $([char]0x80A1) K $([char]0x7EBF)$(ConvertFrom-CodePoints 0x7EC8, 0x7AEF)",
     "$(ConvertFrom-CodePoints 0x79DF, 0x623F, 0x5408, 0x540C) AI $(ConvertFrom-CodePoints 0x667A, 0x80FD, 0x5206, 0x6790, 0x52A9, 0x624B)",
-    (ConvertFrom-CodePoints 0x53EF, 0x672C, 0x5730, 0x8FD0, 0x884C)
+    (ConvertFrom-CodePoints 0x53EF, 0x672C, 0x5730, 0x8FD0, 0x884C),
+    'rag-knowledge-base'
   )
   'projects/a-share-kline-terminal/index.html' = @(
     "A $([char]0x80A1) K $([char]0x7EBF)$(ConvertFrom-CodePoints 0x7EC8, 0x7AEF)",
@@ -59,6 +62,15 @@ $checks = @{
     "$(ConvertFrom-CodePoints 0x672C, 0x5730, 0x8FD0, 0x884C) + $(ConvertFrom-CodePoints 0x9759, 0x6001, 0x6F14, 0x793A)",
     "GitHub $(ConvertFrom-CodePoints 0x4ED3, 0x5E93)",
     '/a-share-kline-demo/'
+  )
+  'projects/rag-knowledge-base/index.html' = @(
+    "$(ConvertFrom-CodePoints 0x591A, 0x6A21, 0x6001) RAG $(ConvertFrom-CodePoints 0x77E5, 0x8BC6, 0x5E93, 0x95EE, 0x7B54, 0x7CFB, 0x7EDF)",
+    (ConvertFrom-CodePoints 0x9879, 0x76EE, 0x80CC, 0x666F),
+    (ConvertFrom-CodePoints 0x6280, 0x672F, 0x65B9, 0x6848),
+    (ConvertFrom-CodePoints 0x5F53, 0x524D, 0x8FDB, 0x5EA6),
+    (ConvertFrom-CodePoints 0x672C, 0x5730, 0x8FD0, 0x884C),
+    '/rag-knowledge-base-demo/',
+    "GitHub $(ConvertFrom-CodePoints 0x4ED3, 0x5E93)"
   )
   'projects/rent-contract-ai-assistant/index.html' = @(
     "$(ConvertFrom-CodePoints 0x79DF, 0x623F, 0x5408, 0x540C) AI $(ConvertFrom-CodePoints 0x667A, 0x80FD, 0x5206, 0x6790, 0x52A9, 0x624B)",
@@ -81,7 +93,7 @@ $checks = @{
     }
   }
 
-  $metadataPages = @('index.html', 'projects/index.html', 'about/index.html', 'projects/a-share-kline-terminal/index.html', 'projects/rent-contract-ai-assistant/index.html')
+  $metadataPages = @('index.html', 'projects/index.html', 'about/index.html', 'projects/a-share-kline-terminal/index.html', 'projects/rent-contract-ai-assistant/index.html', 'projects/rag-knowledge-base/index.html')
   foreach ($relativePath in $metadataPages) {
     $html = Get-Content -Raw -Encoding utf8 (Join-Path $output $relativePath)
     foreach ($requiredAttribute in @('name\s*=\s*["'']?description', 'rel\s*=\s*["'']?canonical', 'property\s*=\s*["'']?og:title', 'property\s*=\s*["'']?og:description', 'property\s*=\s*["'']?og:url')) {
@@ -164,6 +176,34 @@ $checks = @{
   foreach ($token in @('applyPreset', 'glossary', 'scrollIntoView', 'evidenceTarget')) {
     if ($demoScript -notmatch [regex]::Escape($token)) {
       throw "Missing A-share demo learning interaction: $token"
+    }
+  }
+
+  $ragDemoRoot = Join-Path $output 'rag-knowledge-base-demo'
+  foreach ($relativePath in @('index.html', 'styles.css', 'app.js')) {
+    if (-not (Test-Path (Join-Path $ragDemoRoot $relativePath))) {
+      throw "Missing RAG static demo asset: $relativePath"
+    }
+  }
+  $ragDemoHtml = Get-Content -Raw -Encoding utf8 (Join-Path $ragDemoRoot 'index.html')
+  foreach ($expected in @(
+    "RAG $(ConvertFrom-CodePoints 0x77E5, 0x8BC6, 0x5E93)$(ConvertFrom-CodePoints 0x95EE, 0x7B54)$(ConvertFrom-CodePoints 0x9759, 0x6001, 0x6F14, 0x793A)",
+    (ConvertFrom-CodePoints 0x793A, 0x4F8B, 0x6570, 0x636E, 0xFF0C, 0x65E0, 0x771F, 0x5B9E, 0x6A21, 0x578B, 0x8C03, 0x7528),
+    (ConvertFrom-CodePoints 0x77E5, 0x8BC6, 0x5E93),
+    (ConvertFrom-CodePoints 0x68C0, 0x7D22),
+    (ConvertFrom-CodePoints 0x5F15, 0x7528)
+  )) {
+    if ($ragDemoHtml -notmatch [regex]::Escape($expected)) {
+      throw "Missing '$expected' in RAG static demo"
+    }
+  }
+  $ragDemoScript = Get-Content -Raw -Encoding utf8 (Join-Path $ragDemoRoot 'app.js')
+  if ($ragDemoScript -match '\bfetch\s*\(') {
+    throw 'RAG static demo must not request external APIs'
+  }
+  foreach ($token in @('data-mode', 'data-query', 'citations', 'MockProvider')) {
+    if ($ragDemoScript -notmatch [regex]::Escape($token)) {
+      throw "Missing RAG demo interaction: $token"
     }
   }
 } finally {

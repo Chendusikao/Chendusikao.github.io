@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>RAG 知识库问答静态演示</title>
+    <meta name="description" content="RAG 知识库问答的静态交互演示，使用示例数据，无真实模型调用。">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="rag-shell">
+      <a class="back-link" href="/projects/rag-knowledge-base/">← 返回项目案例</a>
+
+      <header class="hero">
+        <div>
+          <p class="eyebrow">RAG LAB · STATIC PRODUCT DEMO</p>
+          <h1>RAG 知识库问答静态演示</h1>
+          <p class="subtitle">从知识库选择、检索编排到可追溯引用的工作台交互展示</p>
+        </div>
+        <div class="hero-meta"><span class="status-dot"></span>MockProvider · 示例模式</div>
+      </header>
+
+      <p class="notice" role="note">示例数据，无真实模型调用；不上传文件，不连接外部 API。</p>
+
+      <section class="workspace" aria-label="RAG 知识库问答工作台">
+        <aside class="sidebar panel">
+          <div class="panel-heading"><span class="eyebrow">KNOWLEDGE BASE</span><span class="count">3</span></div>
+          <div class="kb-list" role="listbox" aria-label="知识库选择">
+            <button class="kb-item is-active" data-kb="产品文档" type="button" role="option" aria-selected="true"><strong>产品文档</strong><span>18 份 · 1.2 MB</span></button>
+            <button class="kb-item" data-kb="租赁法规" type="button" role="option" aria-selected="false"><strong>租赁法规</strong><span>26 份 · 3.8 MB</span></button>
+            <button class="kb-item" data-kb="求职材料" type="button" role="option" aria-selected="false"><strong>求职材料</strong><span>9 份 · 620 KB</span></button>
+          </div>
+          <button class="upload-button" type="button" data-upload>＋ 添加示例文档</button>
+          <p class="upload-hint" id="upload-hint">支持 PDF、Markdown、PNG/JPG · 本页仅模拟状态</p>
+
+          <div class="sidebar-section">
+            <div class="panel-heading"><span class="eyebrow">RETRIEVAL MODE</span><span class="mode-label" id="mode-label">BALANCED</span></div>
+            <div class="mode-list" role="group" aria-label="检索模式">
+              <button data-mode="fast" type="button"><strong>Fast</strong><span>低延迟预览</span></button>
+              <button data-mode="balanced" class="is-active" type="button"><strong>Balanced</strong><span>默认平衡</span></button>
+              <button data-mode="deep" type="button"><strong>Deep</strong><span>更深检索</span></button>
+            </div>
+          </div>
+        </aside>
+
+        <section class="chat-column">
+          <div class="query-card panel">
+            <div class="panel-heading"><div><span class="eyebrow">ASK YOUR KNOWLEDGE BASE</span><h2>向知识库提问</h2></div><span class="active-kb" id="active-kb">产品文档</span></div>
+            <div class="query-box"><textarea id="query-input" rows="2" aria-label="问题输入" placeholder="例如：这个项目的检索流程如何保证可追溯？">这个项目的检索流程如何保证可追溯？</textarea><button id="ask-button" type="button">开始检索 <span>↗</span></button></div>
+            <div class="query-chips" aria-label="示例问题"><button data-query="这个项目的检索流程如何保证可追溯？" type="button">如何保证可追溯？</button><button data-query="系统为什么不依赖 Redis？" type="button">为什么不依赖 Redis？</button><button data-query="V1 当前哪些能力还在留桩？" type="button">哪些能力还在留桩？</button></div>
+          </div>
+
+          <section class="answer-card panel" aria-live="polite">
+            <div class="answer-heading"><div><span class="eyebrow">ANSWER</span><h2 id="answer-title">检索完成 · 示例回答</h2></div><span class="answer-time" id="answer-time">1.8s · balanced</span></div>
+            <div class="answer-body" id="answer-body"><p>系统通过持久化任务、检索编排和引用卡片把回答过程拆成可追踪步骤。当前回答来自固定示例，不代表真实模型输出。</p><ul><li>检索模式：Balanced</li><li>证据范围：产品文档 · 3 个片段</li></ul></div>
+          </section>
+
+          <div class="pipeline panel" aria-label="检索链路">
+            <div class="pipeline-step is-done"><span>01</span><strong>Query rewrite</strong><small>问题改写</small></div><div class="pipeline-line"></div><div class="pipeline-step is-done"><span>02</span><strong>Retrieve</strong><small>BM25 + RRF</small></div><div class="pipeline-line"></div><div class="pipeline-step is-done"><span>03</span><strong>Rerank</strong><small>证据排序</small></div><div class="pipeline-line"></div><div class="pipeline-step is-current"><span>04</span><strong>Answer</strong><small>引用生成</small></div>
+          </div>
+        </section>
+
+        <aside class="evidence-column">
+          <section class="citations panel">
+            <div class="panel-heading"><div><span class="eyebrow">SOURCES</span><h2>引用证据</h2></div><span class="count" id="citation-count">3</span></div>
+            <div id="citations" class="citation-list"></div>
+          </section>
+          <section class="contract panel">
+            <span class="eyebrow">SYSTEM CONTRACT</span>
+            <h2>可插拔 Provider</h2>
+            <p>默认 MockProvider 让流程在没有 GPU 或云端 Key 时仍能演示；后续可切换 OpenAI-compatible、Qwen3 或 Dify Agent。</p>
+            <div class="contract-tags"><span>LLM</span><span>Embedding</span><span>Vision</span><span>Agent</span></div>
+          </section>
+        </aside>
+      </section>
+
+      <footer class="footer-note"><strong>演示边界</strong><span>完整应用需要本地 FastAPI、Next.js 和模型 Provider；本页只复现界面与检索编排的交互形态。</span></footer>
+    </main>
+    <noscript>此静态演示需要启用 JavaScript 才能模拟检索交互。</noscript>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
